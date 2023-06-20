@@ -11,6 +11,9 @@ delta = {
     pg.K_RIGHT:(+5,0),
     pg.K_LEFT:(-5,0)
 }
+
+accs = [a for a in range(1,11)]
+
 def check_bound(rect:pg.Rect) -> tuple[bool,bool]:
     """
     こうかとんRectと爆弾Rectが画面外 or 画面内かを判定する関数
@@ -42,9 +45,13 @@ def main():
     }
     kk_rect = kk_img.get_rect() #練習３
     kk_rect.center = 900,400
-    bd_img = pg.Surface((20,20))  #練習１
-    bd_img.set_colorkey((0,0,0))
-    pg.draw.circle(bd_img,(255,0,0),(10,10),10)
+    #bd_img = pg.Surface((20,20))  #練習１
+    bd_imgs = []
+    for r in range(1,11):
+        bd_img = pg.Surface((20*r,20*r))
+        pg.draw.circle(bd_img,(255,0,0),(10*r,10*r),10*r)
+        bd_imgs.append(bd_img)
+        bd_img.set_colorkey((0,0,0))
     x = random.randint(0,WIDTH)
     y = random.randint(0,HEIGHT)
     bd_rect = bd_img.get_rect()
@@ -69,13 +76,14 @@ def main():
             if key_list[k]:
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
-        sum_mv_tuple = tuple(sum_mv)
-        kk_rot_img = kk_rot[sum_mv_tuple]
+        kk_rot_img = kk_rot[tuple(sum_mv)]
 
         kk_rect.move_ip(sum_mv)
         if check_bound(kk_rect) != (True,True):
             kk_rect.move_ip(-sum_mv[0],-sum_mv[1])
-        print(sum_mv)
+        
+        avx,avy = vx*accs[min(tmr//500,9)],vy*accs[min(tmr//500,9)]
+        bd_img = bd_imgs[min(tmr//500,9)]
 
         screen.blit(bg_img, [0, 0])
         screen.blit(kk_rot_img, kk_rect)
