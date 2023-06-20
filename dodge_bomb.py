@@ -46,22 +46,25 @@ def main():
     kk_rect = kk_img.get_rect() #練習３
     kk_rect.center = 900,400
     #bd_img = pg.Surface((20,20))  #練習１
+
+    clock = pg.time.Clock()
+    tmr = 0
+    
     bd_imgs = []
     for r in range(1,11):
         bd_img = pg.Surface((20*r,20*r))
         pg.draw.circle(bd_img,(255,0,0),(10*r,10*r),10*r)
-        bd_imgs.append(bd_img)
         bd_img.set_colorkey((0,0,0))
+        bd_imgs.append(bd_img)
+
+
+    vx,vy = +5,+5 #練習２
+    bd_rect = bd_imgs[min(tmr//500,9)].get_rect()
     x = random.randint(0,WIDTH)
     y = random.randint(0,HEIGHT)
-    bd_rect = bd_img.get_rect()
     #爆弾rectの中心座標を乱数指定する
-    bd_rect.center = x,y 
-    
 
-    clock = pg.time.Clock()
-    tmr = 0
-    vx,vy = +5,+5 #練習２
+    bd_rect.center = x,y 
 
     while True:
         for event in pg.event.get():
@@ -82,17 +85,18 @@ def main():
         if check_bound(kk_rect) != (True,True):
             kk_rect.move_ip(-sum_mv[0],-sum_mv[1])
         
-        avx,avy = vx*accs[min(tmr//500,9)],vy*accs[min(tmr//500,9)]
-        bd_img = bd_imgs[min(tmr//500,9)]
 
         screen.blit(bg_img, [0, 0])
         screen.blit(kk_rot_img, kk_rect)
-        bd_rect.move_ip(vx,vy) #練習２
+        #bd_rect.move_ip(vx,vy) #練習２
         yoko,tate = check_bound(bd_rect)
         if not yoko:
             vx *= -1
         if not tate:
             vy *= -1
+        avx,avy = vx*accs[min(tmr//500,9)],vy*accs[min(tmr//500,9)]
+        bd_rect.move_ip(avx,avy)
+        bd_img = bd_imgs[min(tmr//500,9)]
         screen.blit(bd_img,bd_rect)
         pg.display.update()
         tmr += 1
