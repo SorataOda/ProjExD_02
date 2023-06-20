@@ -29,7 +29,17 @@ def main():
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
     kk_img = pg.image.load("ex02/fig/3.png")
-    kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+    kk_rot = {
+        (0, 0): kk_img,
+        (0, -5): pg.transform.rotozoom(pg.transform.flip(kk_img, True, False), 90, 1),
+        (5, -5): pg.transform.rotozoom(pg.transform.flip(kk_img, True, False), 45, 1),
+        (5, 0): pg.transform.flip(kk_img, True, False),
+        (5, 5): pg.transform.rotozoom(pg.transform.flip(kk_img, True, False), -45, 1),
+        (0, 5): pg.transform.rotozoom(pg.transform.flip(kk_img, True, False), -90, 1),
+        (-5, 5): pg.transform.rotozoom(kk_img, 45, 1),
+        (-5, 0): kk_img,
+        (-5, -5): pg.transform.rotozoom(kk_img, -45, 1)
+    }
     kk_rect = kk_img.get_rect() #練習３
     kk_rect.center = 900,400
     bd_img = pg.Surface((20,20))  #練習１
@@ -59,12 +69,16 @@ def main():
             if key_list[k]:
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
+        sum_mv_tuple = tuple(sum_mv)
+        kk_rot_img = kk_rot[sum_mv_tuple]
+
         kk_rect.move_ip(sum_mv)
         if check_bound(kk_rect) != (True,True):
             kk_rect.move_ip(-sum_mv[0],-sum_mv[1])
+        print(sum_mv)
 
         screen.blit(bg_img, [0, 0])
-        screen.blit(kk_img, kk_rect)
+        screen.blit(kk_rot_img, kk_rect)
         bd_rect.move_ip(vx,vy) #練習２
         yoko,tate = check_bound(bd_rect)
         if not yoko:
@@ -74,7 +88,7 @@ def main():
         screen.blit(bd_img,bd_rect)
         pg.display.update()
         tmr += 1
-        clock.tick(100)
+        clock.tick(50)
 
 
 if __name__ == "__main__":
